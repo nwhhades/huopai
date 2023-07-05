@@ -2,10 +2,10 @@ name: huopai
 version: 1.0.0+1
 publish_to: none
 description: A new Flutter project.
-environment: 
+environment:
   sdk: '>=3.0.5 <4.0.0'
 
-dependencies: 
+dependencies:
   cupertino_icons: ^1.0.2
   get: ^4.6.5
   flutter_screenutil: ^5.8.4
@@ -13,14 +13,19 @@ dependencies:
   flutter_floating: ^1.0.8
   carousel_slider: ^4.2.1
   video_player: ^2.7.0
-  flutter: 
+  flutter:
     sdk: flutter
 
-dev_dependencies: 
+dev_dependencies:
   flutter_lints: 2.0.2
-  flutter_test: 
+  flutter_test:
     sdk: flutter
 
-flutter: 
+flutter:
   uses-material-design: true
-
+  fonts:
+    - family: PuHuiTi
+      fonts:
+        - asset: res/fonts/PuHuiTi.ttf
+  assets:
+    - res/icons/logo.png
