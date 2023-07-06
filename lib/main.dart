@@ -8,6 +8,7 @@ import 'package:flutter_floating/floating/manager/floating_manager.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import 'package:get/get.dart';
+import 'package:huopai/app/common/ad_view.dart';
 import 'package:huopai/app/common/top_bar.dart';
 
 import 'app/routes/app_pages.dart';
@@ -28,7 +29,20 @@ class MyApp extends StatelessWidget {
         Floating(const TopBar(),
             slideType: FloatingSlideType.onPoint,
             point: Point<double>(0, 0),
-            isShowLog: true,
+            isShowLog: false,
+            isSnapToEdge: false,
+            isStartScroll: false));
+    floatingOne.open(Get.overlayContext!);
+  }
+
+  void createAdView() {
+    log("添加adView");
+    var floatingOne = floatingManager.createFloating(
+        "adView",
+        Floating(const AdView(),
+            slideType: FloatingSlideType.onRightAndBottom,
+            isShowLog: false,
+            isSnapToEdge: false,
             isStartScroll: false));
     floatingOne.open(Get.overlayContext!);
   }
@@ -40,7 +54,11 @@ class MyApp extends StatelessWidget {
       builder: (BuildContext context, Widget? child) {
         return GetMaterialApp(
           title: "霍派智能",
-          theme: ThemeData(fontFamily: 'PuHuiTi'),
+          theme: ThemeData(
+              fontFamily: "PuHuiTi",
+              scrollbarTheme: const ScrollbarThemeData(
+                  thickness: MaterialStatePropertyAll(20),
+                  radius: Radius.circular(5))),
           initialRoute: AppPages.INITIAL,
           getPages: AppPages.routes,
           // 默认动画效果
@@ -52,6 +70,7 @@ class MyApp extends StatelessWidget {
           onReady: () {
             log("app ready");
             createTopBar();
+            createAdView();
           },
           onDispose: () {
             log("app dispose");

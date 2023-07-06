@@ -29,3 +29,14 @@ flutter:
         - asset: res/fonts/PuHuiTi.ttf
   assets:
     - res/icons/logo.png
+    - res/icons/arrows.png
+    - res/videos/vod.mp4
+    - res/images/home/home_banner_1.png
+    - res/images/home/home_banner_2.png
+    - res/images/home/home_banner_3.png
+    - res/images/home/home_1.png
+    - res/images/home/home_2.png
+    - res/images/home/home_3.png
+    - res/images/home/home_4.png
+    - res/images/home/home_5.png
+    - res/images/home/home_6.png
