@@ -16,14 +16,44 @@ class AssetsVideo extends StatefulWidget {
   State<StatefulWidget> createState() => _AssetsVideoState();
 }
 
+enum PlayerState {
+  init,
+  buffering,
+  playing,
+  pause,
+  err,
+  completed,
+}
+
 class _AssetsVideoState extends State<AssetsVideo> {
+  PlayerState playerState = PlayerState.init;
   late VideoPlayerController _controller;
+
+  void showController() {}
+
+  void hideController() {}
 
   @override
   void initState() {
     super.initState();
     _controller = VideoPlayerController.asset(widget.filePath);
-    _controller.initialize().then((_) => setState(() {}));
+    _controller.initialize().then((_) => setState(() {
+          //预加载完成了
+        }));
+    _controller.addListener(() {
+      if (_controller.value.isBuffering) {
+        playerState = PlayerState.buffering;
+      } else if (_controller.value.isPlaying) {
+        playerState = PlayerState.playing;
+      } else if (_controller.value.position == _controller.value.duration) {
+        playerState = PlayerState.completed;
+      } else if (_controller.value.hasError) {
+        playerState = PlayerState.err;
+      } else {
+        playerState = PlayerState.pause;
+      }
+      setState(() {});
+    });
   }
 
   @override
@@ -32,34 +62,51 @@ class _AssetsVideoState extends State<AssetsVideo> {
     super.dispose();
   }
 
+  Widget getPlayerView() {
+    //大小完全取决于父容器
+    return SizedBox.expand(
+        child: FittedBox(
+      fit: BoxFit.fill,
+      child: SizedBox(
+        width: _controller.value.size.width,
+        height: _controller.value.size.height,
+        child: VideoPlayer(_controller),
+      ),
+    ));
+  }
+
+  IconData getIconDataByPlayState() {
+    switch (playerState) {
+      case PlayerState.init:
+        return Icons.play_arrow;
+      case PlayerState.playing:
+        return Icons.pause;
+      case PlayerState.pause:
+        return Icons.play_arrow;
+      default:
+        return Icons.refresh;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     Stack root = Stack(
-      alignment: Alignment.center, // 设置子级小部件的对齐方式
+      alignment: Alignment.center,
       children: [
-        //VideoPlayer(_controller),
-        Center(
-            child: SizedBox.expand(
-                child: FittedBox(
-          fit: BoxFit.cover,
-          child: SizedBox(
-              height: widget.width,
-              width: widget.height,
-              child: VideoPlayer(_controller)),
-        ))),
+        getPlayerView(),
         Positioned(
           bottom: 0,
           child: SizedBox(
             width: widget.width,
             child: VideoProgressIndicator(
               _controller,
-              allowScrubbing: false,
+              allowScrubbing: true,
+              colors: const VideoProgressColors(playedColor: Colors.blue),
             ),
           ),
         ),
         Positioned(
-
-          child:FloatingActionButton(
+          child: FloatingActionButton(
             onPressed: () {
               setState(() {
                 _controller.value.isPlaying
@@ -67,35 +114,17 @@ class _AssetsVideoState extends State<AssetsVideo> {
                     : _controller.play();
               });
             },
-            child: Icon(
-              _controller.value.isPlaying ? Icons.pause : Icons.play_arrow,
-            ),
+            child: Icon(getIconDataByPlayState()),
           ),
-
-          // child: IconButton(
-          //   onPressed: () {
-          //     setState(() {
-          //       _controller.value.isPlaying
-          //           ? _controller.pause()
-          //           : _controller.play();
-          //     });
-          //   },
-          //   icon: Icon(
-          //     color: Colors.white,
-          //     _controller.value.isPlaying ? Icons.pause : Icons.play_arrow,
-          //   ),
-          // ),
         ),
       ],
     );
 
-    return SizedBox(
+    return Container(
       width: widget.width,
       height: widget.height,
-      child: Container(
-        color: Colors.grey,
-        child: root,
-      ),
+      color: Colors.grey,
+      child: root,
     );
   }
 }
